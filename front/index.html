@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAKTIKA_FB_5</title>
+</head>
+<body>
+    <div class="conteiner">
+        <div>
+            <form id="registerForm">
+                <p>Регистрация</p>
+                <input type="text" id="registerUsername" placeholder="Ник">
+                <input type="password" id="registerPassword" placeholder="Пароль">
+                <button type="submit" id="registerButton">Сюда Нажимай</button>
+            </form>
+        </div>
+        <div>
+            <form id="loginForm">
+                <p>Аутентификация</p>
+                <input type="text" id="loginUsername" placeholder="Ник">
+                <input type="password" id="loginPassword" placeholder="Пароль">
+                <button type="submit" id="loginButton">Сюда Нажимай</button>
+            </form>
+        </div>
+        <button id="protectedButton">Access Protected Route</button>
+        <div id="result"></div>
+
+        <script>
+            const resultDiv = document.getElementById('result');
+
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const username = document.getElementById('registerUsername').value;
+                const userpassword = document.getElementById('registerPassword').value;
+
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, userpassword })
+                })
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = data.message;
+                } else {
+                    resultDiv.textContent = data.message;
+                }
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const username = document.getElementById('loginUsername').value;
+                const userpassword = document.getElementById('loginPassword').value;
+
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, userpassword })
+                })
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = data.message;
+                    localStorage.setItem('token', data.token);
+                } else {
+                    resultDiv.textContent = data.message;
+                }
+            });
+
+            document.getElementById('protectedButton').addEventListener('click', async () => {
+                const token = localStorage.getItem('token');
+
+                const response = await fetch('/protected', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    resultDiv.textContent = 'Доступ запрещен';
+                    return;
+                }
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.textContent = `Закрытая инфа: ${JSON.stringify(data)}`;
+                } else {
+                    resultDiv.textContent = 'Доступ запрещен';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
