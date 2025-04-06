@@ -2,9 +2,6 @@ back/node_modules/
 back/package-lock.json
 back/cache.json
 
-front/node_modules/
-front/package-lock.json
-
 node_modules
 package-lock.json
 
