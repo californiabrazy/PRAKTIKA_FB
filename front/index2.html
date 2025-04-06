@@ -9,15 +9,21 @@
 <body>
     <div class="container">
         <button id="Update">Обновить</button>
+        <div id="data"></div>
         <button id="Theme">Переключить тему</button>
         <button id="Quit">Выйти</button>
-        <div id="data"></div>
     </div>
 
     <script>
         const API_URL = 'http://localhost:8080';
     
         document.addEventListener('DOMContentLoaded', async () => {
+            window.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.body.className = `theme-${savedTheme}`;
+            });
+
+
             const res = await fetch(`${API_URL}/profile`, {
                 method: 'GET',
                 credentials: 'include'
