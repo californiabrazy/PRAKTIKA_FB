@@ -8,6 +8,8 @@ const fs = require('fs');
 const app = express();
 const PORT = 8080;
 const USERS_FILE = path.join(__dirname, '../users.json');
+const CACHE_FILE = './cache.json';
+const CACHE_TTL = 60 * 1000;
 
 app.use(express.json());
 app.use(cors({
@@ -101,6 +103,31 @@ app.post('/logout', (req, res) => {
         res.clearCookie('connect.sid');
         res.sendStatus(200);
     });
+});
+
+app.get('/data', (req, res) => {
+    // 1. Проверяем, есть ли кэш
+    if (fs.existsSync(CACHE_FILE)) {
+        const cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+        const age = Date.now() - cache.timestamp;
+
+        if (age < CACHE_TTL) {
+            // 2. Если кэш свежий — отдаем его
+            return res.json({ source: 'cache', data: cache.data });
+        }
+    }
+
+    // 3. Генерируем новые данные
+    const freshData = `Текущее время: ${new Date().toLocaleTimeString()}`;
+
+    // 4. Сохраняем в кэш
+    fs.writeFileSync(CACHE_FILE, JSON.stringify({
+        timestamp: Date.now(),
+        data: freshData
+    }, null, 2));
+
+    // 5. Отправляем клиенту
+    res.json({ source: 'fresh', data: freshData });
 });
 
 app.listen(PORT, () => {

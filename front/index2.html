@@ -11,6 +11,7 @@
         <button id="Update">Обновить</button>
         <button id="Theme">Переключить тему</button>
         <button id="Quit">Выйти</button>
+        <div id="data"></div>
     </div>
 
     <script>
@@ -29,11 +30,18 @@
             const updateButton = document.getElementById('Update');
             const themeButton = document.getElementById('Theme');
             const quitButton = document.getElementById('Quit');
+            const dataBox = document.getElementById('data');
     
             updateButton.addEventListener('click', async () => {
                 const res = await fetch(`${API_URL}/data`, { credentials: 'include' });
-                const text = await res.text();
-                alert('Данные: ' + text);
+                
+                if (res.status === 401) {
+                    location.href = '/';
+                    return;
+                }
+
+                const json = await res.json();
+                dataBox.textContent = JSON.stringify(json, null, 2);
             });
     
             themeButton.addEventListener('click', () => {
