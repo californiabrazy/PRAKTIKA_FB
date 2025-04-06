@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    justify-content: center;
+    height: 95vh;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.container input, button {
+    font-size: 18px;
+}
+
+.form h2 {
+    margin: 0;
+}
+
+body.theme-light {
+    background-color: white;
+    color: black;
+}
+
+body.theme-dark {
+    background-color: #121212;
+    color: white;
+}
