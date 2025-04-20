@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="styles.css" rel="stylesheet">
+    <title>Profile</title>
+</head>
+<body>
+    <div class="container">
+        <button id="Update">Обновить</button>
+        <div id="data"></div>
+        <button id="Theme">Переключить тему</button>
+        <button id="Quit">Выйти</button>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080';
+    
+        document.addEventListener('DOMContentLoaded', async () => {
+            window.addEventListener('DOMContentLoaded', () => {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.body.className = `theme-${savedTheme}`;
+            });
+
+
+            const res = await fetch(`${API_URL}/profile`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+    
+            if (!res.ok) {
+                location.href = '/';
+            }
+    
+            const updateButton = document.getElementById('Update');
+            const themeButton = document.getElementById('Theme');
+            const quitButton = document.getElementById('Quit');
+            const dataBox = document.getElementById('data');
+    
+            updateButton.addEventListener('click', async () => {
+                const res = await fetch(`${API_URL}/data`, { credentials: 'include' });
+                
+                if (res.status === 401) {
+                    location.href = '/';
+                    return;
+                }
+
+                const json = await res.json();
+                dataBox.textContent = JSON.stringify(json, null, 2);
+            });
+    
+            themeButton.addEventListener('click', () => {
+                const current = localStorage.getItem('theme') || 'light';
+                const next = current === 'light' ? 'dark' : 'light';
+                document.body.className = `theme-${next}`;
+                localStorage.setItem('theme', next);
+            });
+    
+            quitButton.addEventListener('click', async () => {
+                await fetch(`${API_URL}/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                location.href = '/';
+            });
+    
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.className = `theme-${theme}`;
+        });
+    </script>
+</body>
+</html>
