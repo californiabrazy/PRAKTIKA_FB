@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Умный список задач</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>Умный список задач</h1>
+      <button id="notificationBtn">Включить уведомления</button>
+    </header>
+    
+    <div class="todo-controls">
+      <input type="text" id="taskInput" placeholder="Добавить новую задачу...">
+      <button id="addTaskBtn">Добавить</button>
+    </div>
+    
+    <div class="filter-buttons">
+      <button class="filter-btn active" data-filter="all">Все</button>
+      <button class="filter-btn" data-filter="active">Активные</button>
+      <button class="filter-btn" data-filter="completed">Выполненные</button>
+    </div>
+    
+    <ul id="taskList"></ul>
+  </div>
+
+  <script src="js/db.js"></script>
+  <script src="js/notification.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Регистрация Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful');
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
